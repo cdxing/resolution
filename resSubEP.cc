@@ -30,17 +30,18 @@ void resSubEP()
     gROOT->Reset();
     gStyle->SetOptFit(11101);
     //setstyle();
-    TFile *infile=TFile::Open("/star/u/dchen/ana/3gev_2018/shift/test_shift.root");
+    //TFile *infile=TFile::Open("/star/u/dchen/ana/3gev_2018/shift/test_shift.root");
+    TFile *infile=TFile::Open("/star/data01/pwg/dchen/Ana/19p6GeV/shift/19gev_shifted.root");
 
-    TProfile *p_epA_epB = (TProfile*)infile->Get("p_r1_Sub0_1");
-    TProfile *p_epA_epC = (TProfile*)infile->Get("p_r1_Sub0_2");
-    TProfile *p_epB_epC = (TProfile*)infile->Get("p_r1_Sub1_2");
+    TProfile *p_r1_epd_ABCD_sub0_1_input = (TProfile*)infile->Get("p_r1_epd_ABCD_sub0_1");
+    TProfile *p_r1_epd_ABCD_wt_sub0_1_input = (TProfile*)infile->Get("p_r1_epd_ABCD_wt_sub0_1");
+    TProfile *p_r2_tpc_AB_sub0_1_input = (TProfile*)infile->Get("p_r2_tpc_AB_sub0_1");
     
-    const int n= 16;//9;
-    //double cent[n]={2.5,7.5,15,25,35,45,55,65,75};
-    double cent[n]={2.5,7.5,12.5,17.5,22.5,27.5,32.5,37.5,42.5,47.5,52.5,57.5,62.5,67.5,72.5,77.5};
-    double zero[n]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    //double zero[n]={0,0,0,0,0,0,0,0,0};
+    const int n= 9;
+    double cent[n]={2.5,7.5,15,25,35,45,55,65,75};
+    //double cent[n]={2.5,7.5,12.5,17.5,22.5,27.5,32.5,37.5,42.5,47.5,52.5,57.5,62.5,67.5,72.5,77.5};
+    //double zero[n]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double zero[n]={0,0,0,0,0,0,0,0,0};
 
     /*double val_tAtB[n], val_tAeA[n], val_tAeB[n], val_tAeC[n], val_tAeD[n];
     double              val_tBeA[n], val_tBeB[n], val_tBeC[n], val_tBeD[n];
@@ -85,14 +86,16 @@ void resSubEP()
 
         val_tAtB[i] = p_tAtB->GetBinContent(n-i);*/
 
-        val_epA_epB[i] = p_epA_epB->GetBinContent(n-i);
-        val_epA_epC[i] = p_epA_epC->GetBinContent(n-i);
-        val_epB_epC[i] = p_epB_epC->GetBinContent(n-i);
+        val_epA_epB[i] = p_r1_epd_ABCD_sub0_1_input->GetBinContent(n-i);
+        val_epA_epC[i] = p_r1_epd_ABCD_wt_sub0_1_input->GetBinContent(n-i);
+        val_epB_epC[i] = p_r2_tpc_AB_sub0_1_input->GetBinContent(n-i);
 
         //cout << "res = " << sqrt(val_tAtB[i]) << endl;
     }
 
-    double res1_epAepBepC[n];
+    double res1_epd_ABCD_sub0_1[n];
+    double res1_epd_ABCD_wt_sub0_1[n];
+    double res2_tpc_AB_sub0_1[n];
     
     /*double res1_eABeCDtA[n];
     double res1_eABeCDtB[n];
@@ -108,7 +111,9 @@ void resSubEP()
 
     for(int i=0; i<n; i++)
     {
-        res1_epAepBepC[i] = sqrt( val_epA_epB[i] * val_epA_epC[i] / val_epB_epC[i] );
+        res1_epd_ABCD_sub0_1[i] = sqrt( val_epA_epB[i]);// * val_epA_epC[i] / val_epB_epC[i] );
+        res1_epd_ABCD_wt_sub0_1[i] = sqrt( val_epA_epC[i]);
+        res2_tpc_AB_sub0_1[i] = sqrt( val_epB_epC[i]);
 
         /*res1_eABeCDtA[i] = sqrt( val_eABeCD[i] * val_tAeAB[i] / val_tAeCD[i] );
         res1_eABeCDtB[i] = sqrt( val_eABeCD[i] * val_tBeAB[i] / val_tBeCD[i] );
@@ -128,7 +133,7 @@ void resSubEP()
         //cout << "res1 = " << res1_eABeCtB[i] << endl;
         //cout << "res1 = " << res1_eABeDtB[i] << endl;
         //cout << "res1 = " << res1_eABeCtB[i] << endl;*/
-        cout << "res1 = " << res1_epAepBepC[i] << endl;
+        cout << "res1 = " << res1_epd_ABCD_sub0_1[i] << endl;
 
         //res1_eABCDtAtB[i] = sqrt( val_tAeABCD[i] * val_tBeABCD[i] / val_tAtB[i] );
     }
@@ -137,7 +142,7 @@ void resSubEP()
     cout << "res1 eC = ";
     //cout << "res1 eC = ";
     //for(int i=8; i>=0; i--){cout << res1_eABeCtB[i] << ", ";}cout << endl;
-    for(int i=8; i>=0; i--){cout << res1_epAepBepC[i] << ", ";}cout << endl;
+    for(int i=8; i>=0; i--){cout << res1_epd_ABCD_sub0_1[i] << ", ";}cout << endl;
     //cout << "res1 eD = ";
     //for(int i=8; i>=0; i--){cout << res1_eABeDtB[i] << ", ";}cout << endl;
     //cout << "res1 eCD = ";
@@ -177,7 +182,9 @@ void resSubEP()
 
 
 
-    TGraphErrors *gr_epAepBepC =new TGraphErrors(n, cent, res1_epAepBepC, zero, zero);
+    TGraphErrors *gr_epAepBepC =new TGraphErrors(n, cent, res1_epd_ABCD_sub0_1, zero, zero);
+    TGraphErrors *gr_epBepCepA =new TGraphErrors(n, cent, res1_epd_ABCD_wt_sub0_1, zero, zero);
+    TGraphErrors *gr_epCepAepB =new TGraphErrors(n, cent, res2_tpc_AB_sub0_1, zero, zero);
     /*TGraphErrors *gr_eABeCDtA =new TGraphErrors(n, cent, res1_eABeCDtA, zero, zero);
     TGraphErrors *gr_eABeCDtB =new TGraphErrors(n, cent, res1_eABeCDtB, zero, zero);
     TGraphErrors *gr_eABtAtB =new TGraphErrors(n, cent, res1_eABtAtB, zero, zero);
@@ -196,26 +203,26 @@ void resSubEP()
     c1->cd()->Draw();
     c1->SetGridx(1);
     c1->SetGridy(2);
-    TH2D *h_1=new TH2D("h_1","", 16, -5, 85, 16, -0.05, 1.45);
+    TH2D *h_1=new TH2D("h_1","", 16, -5, 85, 16, -0.05, 0.90);
     h_1->SetStats(0);
     h_1->GetXaxis()->SetTitle("% Centrality");
     h_1->GetYaxis()->SetTitle("Resolution");
     h_1->Draw();
 
     //EPD-AB
-    /*gr_eABeCDtA->SetMarkerStyle(24);
-    gr_eABeCDtA->SetMarkerColor(2);
-    gr_eABeCDtA->SetLineColor(2);
-    gr_eABeCDtA->SetMarkerSize(1.8);
-    //gr_eABeCDtA->Draw("PE");
+    gr_epBepCepA->SetMarkerStyle(24);
+    gr_epBepCepA->SetMarkerColor(2);
+    gr_epBepCepA->SetLineColor(2);
+    gr_epBepCepA->SetMarkerSize(1.8);
+    gr_epBepCepA->Draw("PE");
 
-    gr_eCDeABtA->SetMarkerStyle(25);
-    gr_eCDeABtA->SetMarkerColor(4);
-    gr_eCDeABtA->SetLineColor(4);
-    gr_eCDeABtA->SetMarkerSize(1.8);
-    //gr_eCDeABtA->Draw("PE");
+    gr_epCepAepB->SetMarkerStyle(25);
+    gr_epCepAepB->SetMarkerColor(4);
+    gr_epCepAepB->SetLineColor(4);
+    gr_epCepAepB->SetMarkerSize(1.8);
+    gr_epCepAepB->Draw("PE");
 
-    gr_eABtAtB->SetMarkerStyle(29);
+    /*gr_eABtAtB->SetMarkerStyle(29);
     gr_eABtAtB->SetMarkerColor(4);
     gr_eABtAtB->SetLineColor(4);
     gr_eABtAtB->SetMarkerSize(1.8);
@@ -282,7 +289,9 @@ void resSubEP()
 
     TLegend *leg=new TLegend(0.5,0.6,0.899,0.899);
     leg->SetFillColor(0);
-    leg->AddEntry(gr_epA_epB_epC, "Sub-A vs. Sub-B and Sub-C","p");
+    leg->AddEntry(gr_epAepBepC, "EPD sub r1","p");
+    leg->AddEntry(gr_epBepCepA, "EPD sub r1 w/ eta weighting","p");
+    leg->AddEntry(gr_epCepAepB, "TPC sub r2","p");
     //leg->AddEntry(gr_eABeCDtA, "EPD-AB vs. EPD-CD and TPC-A","p");
     //leg->AddEntry(gr_eCDeABtA, "EPD-CD vs. EPD-AB and TPC-A","p");
     //leg->AddEntry(gr_eABeCDtB, "EPD-AB vs. EPD-CD and TPC-B","p");
